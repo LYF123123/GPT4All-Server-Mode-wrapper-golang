@@ -1,7 +1,7 @@
 package wrapper
 
 type Models struct {
-	Data   []Datum `json:data`
+	Data   []Datum `json:"data"`
 	Object string  `json:"object"`
 }
 
