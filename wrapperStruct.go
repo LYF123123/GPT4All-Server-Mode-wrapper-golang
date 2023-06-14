@@ -31,6 +31,61 @@ type Permission struct {
 	Organization       string      `json:"organization"`
 }
 
+// Chat
+
+type ChatReq struct {
+	Model            string                      `json:"model"`
+	Messages         []ChatReqMessage            `json:"messages"`
+	Functions        []ChatReqFunction           `json:"functions,omitempty"`
+	FunctionCall     interface{}                 `json:"function_call,omitempty"`
+	Temperature      float64                     `json:"temperature,omitempty"`
+	TopP             float64                     `json:"top_p,omitempty"`
+	Stream           bool                        `json:"stream,omitempty"`
+	MaxTokens        int                         `json:"max_tokens,omitempty"`
+	PresencePenalty  float64                     `json:"presence_penalty,omitempty"`
+	FrequencyPenalty float64                     `json:"frequency_penalty,omitempty"`
+	LogitBias        map[interface{}]interface{} `json:"logit_bias,omitempty"`
+	User             string                      `json:"user,omitempty"`
+}
+
+type ChatReqMessage struct {
+	Role         string      `json:"role"`
+	Content      string      `json:"content,omitempty"`
+	Name         string      `json:"name,omitempty"`
+	FunctionCall interface{} `json:"function_call,omitempty"`
+}
+
+type ChatReqFunction struct {
+	Name        string      `json:"name"`
+	Description string      `json:"description,omitempty"`
+	Parameters  interface{} `json:"parameters,omitempty"`
+}
+
+type ChatResp struct {
+	ID      string           `json:"id"`
+	Object  string           `json:"object"`
+	Created int64            `json:"created"`
+	Choices []ChatRespChoice `json:"choices"`
+	Usage   ChatRespUsage    `json:"usage"`
+}
+
+type ChatRespChoice struct {
+	Index        int64           `json:"index"`
+	Message      ChatRespMessage `json:"message"`
+	FinishReason string          `json:"finish_reason"`
+}
+
+type ChatRespMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type ChatRespUsage struct {
+	PromptTokens     int64 `json:"prompt_tokens"`
+	CompletionTokens int64 `json:"completion_tokens"`
+	TotalTokens      int64 `json:"total_tokens"`
+}
+
 // Completions
 
 type CompletionReq struct {
@@ -67,15 +122,15 @@ func getDefaultDataCompletionReq() CompletionReq {
 }
 
 type CompletionResp struct {
-	Choices []Choice `json:"choices"`
-	Created int64    `json:"created"`
-	ID      string   `json:"id"`
-	Model   string   `json:"model"`
-	Object  string   `json:"object"`
-	Usage   Usage    `json:"usage"`
+	CompletionChoices []CompletionChoice `json:"choices"`
+	Created           int64              `json:"created"`
+	ID                string             `json:"id"`
+	Model             string             `json:"model"`
+	Object            string             `json:"object"`
+	Usage             CompletionUsage    `json:"usage"`
 }
 
-type Choice struct {
+type CompletionChoice struct {
 	FinishReason string        `json:"finish_reason"`
 	Index        int64         `json:"index"`
 	Logprobs     interface{}   `json:"logprobs"`
@@ -83,8 +138,37 @@ type Choice struct {
 	Text         string        `json:"text"`
 }
 
-type Usage struct {
+type CompletionUsage struct {
 	CompletionTokens int64 `json:"completion_tokens"`
 	PromptTokens     int64 `json:"prompt_tokens"`
+	TotalTokens      int64 `json:"total_tokens"`
+}
+
+// Edits
+
+type EditReq struct {
+	Model        string  `json:"model"`
+	Input        string  `json:"input,omitempty"`
+	Instructions string  `json:"instructions"`
+	N            int     `json:"n,omitempty"`
+	Temperature  float64 `json:"temperature,omitempty"`
+	TopP         float64 `json:"top_p,omitempty"`
+}
+
+type EditResp struct {
+	Object  string           `json:"object"`
+	Created int64            `json:"created"`
+	Choices []EditRespChoice `json:"choices"`
+	Usage   EditRespUsage    `json:"usage"`
+}
+
+type EditRespChoice struct {
+	Text  string `json:"text"`
+	Index int64  `json:"index"`
+}
+
+type EditRespUsage struct {
+	PromptTokens     int64 `json:"prompt_tokens"`
+	CompletionTokens int64 `json:"completion_tokens"`
 	TotalTokens      int64 `json:"total_tokens"`
 }
