@@ -172,3 +172,57 @@ type EditRespUsage struct {
 	CompletionTokens int64 `json:"completion_tokens"`
 	TotalTokens      int64 `json:"total_tokens"`
 }
+
+// Image
+
+type ImageReq struct {
+	Prompt         string `json:"prompt"`
+	N              int    `json:"n,omitempty"`
+	Size           string `json:"size,omitempty"`
+	ResponseFormat string `json:"response_format,omitempty"`
+	User           string `json:"user,omitempty"`
+}
+
+type ImageResp struct {
+	Created int64            `json:"created"`
+	Data    []ImageRespDatum `json:"data"`
+}
+
+type ImageRespDatum struct {
+	URL string `json:"url"`
+}
+
+type ImageEditReq struct {
+	Image          string `form:"image"`
+	Mask           string `form:"mask,omitempty"`
+	Prompt         string `form:"prompt"`
+	N              int    `form:"n"`
+	Size           string `form:"size,omitempty"`
+	ResponseFormat string `form:"response_format,omitempty"`
+	User           string `form:"user,omitempty"`
+}
+
+type ImageEditResp struct {
+	Created int64            `json:"created"`
+	Data    []ImageEditRespDatum `json:"data"`
+}
+
+type ImageEditRespDatum struct {
+	URL string `json:"url"`
+}
+
+type ImageVariationReq struct {
+	Image          string `form:"image"`
+	N              int    `form:"n"`
+	Size           string `form:"size,omitempty"`
+	ResponseFormat string `form:"response_format,omitempty"`
+	User           string `form:"user,omitempty"`
+}
+type ImageVariationResp struct {
+	Created int64            `json:"created"`
+	Data    []ImageVariationRespDatum `json:"data"`
+}
+
+type ImageVariationRespDatum struct {
+	URL string `json:"url"`
+}
