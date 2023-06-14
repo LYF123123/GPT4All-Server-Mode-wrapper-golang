@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type GPTClient struct {
@@ -76,7 +77,7 @@ func (c *GPTClient) CreateChatCompletionRawRequest(cReq ChatReq) (ChatResp, erro
 	if err != nil {
 		return ChatResp{}, err
 	}
-	req, err := http.NewRequest("POST", c.ApiBase+"/completions", bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest("POST", c.ApiBase+"/chat/completions", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return ChatResp{}, err
 	}
@@ -158,7 +159,7 @@ func (c *GPTClient) CreateEditRawRequest(eReq EditReq) (EditResp, error) {
 	if err != nil {
 		return EditResp{}, err
 	}
-	req, err := http.NewRequest("POST", c.ApiBase+"/completions", bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest("POST", c.ApiBase+"/edits", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return EditResp{}, err
 	}
@@ -175,4 +176,91 @@ func (c *GPTClient) CreateEditRawRequest(eReq EditReq) (EditResp, error) {
 	eResp := EditResp{}
 	err = json.Unmarshal(respBody, &eResp)
 	return eResp, err
+}
+
+// Image
+// !Warning Not test
+// apiBase/images/generations
+func (c *GPTClient) CreateImageRawRequest(iReq ImageReq) (ImageResp, error) {
+	reqBody, err := json.Marshal(iReq)
+	if err != nil {
+		return ImageResp{}, err
+	}
+	req, err := http.NewRequest("POST", c.ApiBase+"/images/generations", bytes.NewBuffer(reqBody))
+	if err != nil {
+		return ImageResp{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.Token)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return ImageResp{}, err
+	}
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ImageResp{}, err
+	}
+	iResp := ImageResp{}
+	err = json.Unmarshal(respBody, &iResp)
+	return iResp, err
+}
+
+// !Warning Not test
+// apiBase/images/edits
+func (c *GPTClient) CreateImageEditRawRequest(iReq ImageEditReq) (ImageEditResp, error) {
+	reqBody := url.Values{}
+	reqBody.Set("image", iReq.Image)
+	reqBody.Set("mask", iReq.Mask)
+	reqBody.Set("prompt", iReq.Prompt)
+	reqBody.Set("n", strconv.Itoa(iReq.N)) //! maybe not work
+	reqBody.Set("size", iReq.Size)
+	reqBody.Set("response_format", iReq.ResponseFormat)
+	reqBody.Set("user", iReq.User)
+
+	req, err := http.NewRequest("POST", c.ApiBase+"/images/edits", bytes.NewBuffer([]byte(reqBody.Encode())))
+	if err != nil {
+		return ImageEditResp{}, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", "Bearer "+c.Token)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return ImageEditResp{}, err
+	}
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ImageEditResp{}, err
+	}
+	iResp := ImageEditResp{}
+	err = json.Unmarshal(respBody, &iResp)
+	return iResp, err
+}
+
+// !Warning Not test
+// apiBase/images/variations
+func (c *GPTClient) CreateImageVariationRawRequest(iReq ImageVariationReq) (ImageVariationResp, error) {
+	reqBody := url.Values{}
+	reqBody.Set("image", iReq.Image)
+	reqBody.Set("n", strconv.Itoa(iReq.N)) //! maybe not work
+	reqBody.Set("size", iReq.Size)
+	reqBody.Set("response_format", iReq.ResponseFormat)
+	reqBody.Set("user", iReq.User)
+
+	req, err := http.NewRequest("POST", c.ApiBase+"/images/variations", bytes.NewBuffer([]byte(reqBody.Encode())))
+	if err != nil {
+		return ImageVariationResp{}, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", "Bearer "+c.Token)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return ImageVariationResp{}, err
+	}
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ImageVariationResp{}, err
+	}
+	iResp := ImageVariationResp{}
+	err = json.Unmarshal(respBody, &iResp)
+	return iResp, err
 }
