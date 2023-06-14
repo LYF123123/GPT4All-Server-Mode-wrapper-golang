@@ -264,3 +264,30 @@ func (c *GPTClient) CreateImageVariationRawRequest(iReq ImageVariationReq) (Imag
 	err = json.Unmarshal(respBody, &iResp)
 	return iResp, err
 }
+
+// Embeddings
+// !Warning Not test
+// apiBase/embeddings
+func (c *GPTClient) CreateEmbeddingsRawRequest(eReq EmbeddingReq) (EmbeddingResp, error) {
+	reqBody, err := json.Marshal(eReq)
+	if err != nil {
+		return EmbeddingResp{}, err
+	}
+	req, err := http.NewRequest("POST", c.ApiBase+"/embeddings", bytes.NewBuffer(reqBody))
+	if err != nil {
+		return EmbeddingResp{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.Token)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return EmbeddingResp{}, err
+	}
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return EmbeddingResp{}, err
+	}
+	eResp := EmbeddingResp{}
+	err = json.Unmarshal(respBody, &eResp)
+	return eResp, err
+}

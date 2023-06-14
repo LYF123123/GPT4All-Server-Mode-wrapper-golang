@@ -203,7 +203,7 @@ type ImageEditReq struct {
 }
 
 type ImageEditResp struct {
-	Created int64            `json:"created"`
+	Created int64                `json:"created"`
 	Data    []ImageEditRespDatum `json:"data"`
 }
 
@@ -219,10 +219,36 @@ type ImageVariationReq struct {
 	User           string `form:"user,omitempty"`
 }
 type ImageVariationResp struct {
-	Created int64            `json:"created"`
+	Created int64                     `json:"created"`
 	Data    []ImageVariationRespDatum `json:"data"`
 }
 
 type ImageVariationRespDatum struct {
 	URL string `json:"url"`
+}
+
+// Embeddings
+
+type EmbeddingReq struct {
+	Model string   `json:"model"`
+	Input []string `json:"input"`
+	User  string   `json:"user,omitempty"`
+}
+
+type EmbeddingResp struct {
+	Object string               `json:"object"`
+	Data   []EmbeddingRespDatum `json:"data"`
+	Model  string               `json:"model"`
+	Usage  EmbeddingRespUsage   `json:"usage"`
+}
+
+type EmbeddingRespDatum struct {
+	Object    string    `json:"object"`
+	Embedding []float64 `json:"embedding"`
+	Index     int64     `json:"index"`
+}
+
+type EmbeddingRespUsage struct {
+	PromptTokens int64 `json:"prompt_tokens"`
+	TotalTokens  int64 `json:"total_tokens"`
 }
